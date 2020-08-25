@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace PurchaseSystem.Controllers
 {
+    [Authorize]
     public class UserHomeController : Controller
     {
         ApplicationDbContext db = new ApplicationDbContext();

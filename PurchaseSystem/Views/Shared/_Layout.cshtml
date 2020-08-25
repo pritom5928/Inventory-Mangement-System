@@ -18,7 +18,15 @@
                     <span class="icon-bar"></span>
                 </button>
                 @*@Html.ActionLink("Purchase System", "Login", "Account", new { area = "" }, new { @class = "navbar-brand" })*@
-                @Html.ActionLink("Purchase System", "DisplayModule", "UserHome", new { @class = "navbar-brand"})
+                
+                @if (User.Identity.IsAuthenticated)
+                {
+                    @Html.ActionLink("Purchase System", "DisplayModule", "UserHome", new { @class = "navbar-brand" })
+                }
+                else
+                {
+                <a href="#" class="navbar-brand">Purchase System</a>
+                }
             </div>
             <div class="navbar-collapse collapse">
 
