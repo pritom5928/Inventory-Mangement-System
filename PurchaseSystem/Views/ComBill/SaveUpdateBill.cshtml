@@ -1,0 +1,147 @@
+﻿@model PurchaseSystem.DTO.ComBillDTO
+
+@{
+    ViewBag.Title = "SaveUpdateBill";
+}
+<link href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" rel="Stylesheet"></link>
+<h2>SaveUpdateBill</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="alert alert-dismissable alert-success" style="height: 50px;">
+            <div class="col-md-6">
+                <strong>
+                    <label>Customer Name :</label>
+                    @Html.DisplayFor(s => s.CustomerMst.CustomerName)
+                </strong>
+            </div>
+
+            <div class="col-md-6">
+                <strong>
+                    <label>Mobile : </label>
+                    @Html.DisplayFor(s => s.CustomerMst.Mobileno)
+                </strong>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2"> Product </label>
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.ProductList, new SelectList(Model.ProductList, "ProductId", "ProductName"), "--Select Products--", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.FK_ProductId, "", new { @class = "text-danger" })
+                <input type="text" id="txtItemSearch" class="form-control" placeholder="Search Product" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2"> Product Quantity</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ProdQuantity, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ProdQuantity, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2"> Product Price</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "CustomerList")
+</div>
+
+
+
+
+@section scripts{
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+
+            $("#txtItemSearch").autocomplete({
+
+                source: function (request, response) {
+
+                    $.ajax({
+
+                        url: "/ComBill/GetAllProductsBySearch",
+                        type: "Get",
+                        dataType: 'JSON',
+                        data: {
+                            productName: request.term
+                        },
+                        success: function (data) {
+
+                            response($.map(data, function (item) {
+
+                                return { label: item.ProductName, value: item.ProductId}
+
+                            }));
+                        }
+                        
+                    });
+                },
+                select: function (event, ui) {
+                    event.preventDefault();
+                    $("#txtItemSearch").val('');
+                    $("#ProductList").val(ui.item.value);
+                }
+            });
+
+            $("#ProdQuantity").change(function () {
+
+                var quantity = $("#ProdQuantity").val();
+
+                if (quantity != 0 || quantity != null || quantity != "" || typeof quantity  != "undefined") {
+
+                    $.ajax({
+                        url: "/ComBill/CalculatePrice",
+                        type: "Get",
+                        dataType: 'JSON',
+                        data: {
+                            selectedProductId: $("#ProductList").val(),
+                            quantity: quantity
+                        },
+
+                        success: function (data) {
+
+                            if (data != null || data != []) {
+
+                                $("#Price").empty();
+                                $("#Price").val(data);
+
+                            }
+
+                        },
+                        error: function (err) {
+
+                            alert(JSON.stringify(err));
+                        }
+
+                    });
+                }
+                
+            });
+        });
+
+    </script>
+}

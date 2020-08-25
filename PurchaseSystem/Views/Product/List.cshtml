@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewBag.Title = "List";
+}
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+<style>
+    #022a50
+
+    .fullbody {
+        margin-top: 5%;
+    }
+
+    table thead tr th {
+        color: #fff;
+        background: #04498D;
+    }
+</style>
+
+
+<div style="margin-top:2%;">
+    @Html.ActionLink("Add Product", "AddUpdatProduct")
+</div>
+
+<h3>Product List</h3>
+
+<div class="fullbody" style="margin-top:3%;">
+    <table id="productTable" class="table table-bordered table-hover table-responsive">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Product Type</th>
+                <th>Original Price</th>
+                <th>Selling Price</th>
+                <th>Product Quantity</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+
+
+@section scripts{
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            $("#productTable").DataTable({
+
+                "ordering": true,
+                "processing": true,
+                "responsive": true,
+                "paging": true,
+
+                "ajax": {
+
+                    "type": "GET",
+                    "url": "/Product/ProductList",
+                    "datatype": "json",
+
+                },
+
+                "columns": [
+
+                    { "data": "ProductName" },
+                    { "data": "ProductType" },
+                    { "data": "OriPrice" },
+                    { "data": "SellingUptoPrice" },
+                    { "data": "ProductQuantity" },
+                    {
+                        "title": "Action",
+                        "render": function (data, type, row, meta) {
+                            
+                            return '<a class="btn btn-primary" href="/product/Edit/' + row.pk_ProductId + '">Edit</a> | <a class="btn btn-primary" href = "/product/Delete/' + row.pk_ProductId +'"> Delete </a>';
+                        }
+                    }
+                ],
+            });
+
+        });
+
+
+    </script>
+}
+
+

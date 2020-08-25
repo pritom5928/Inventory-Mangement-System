@@ -1,0 +1,80 @@
+﻿
+@{
+    ViewBag.Title = "CustomerList";
+}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css">
+
+<style>
+    #022a50
+
+    .fullbody {
+        margin-top: 5%;
+    }
+
+    table thead tr th {
+        color: #fff;
+        background: #04498D;
+    }
+</style>
+
+<h3>CustomerList</h3>
+
+<p>
+    @Html.ActionLink("Create New", "SaveUpdateCustomer", "Customer", null, new { @class = "btn btn-primary"})
+</p>
+
+<div class="fullbody" style="margin-top:3%;">
+    <table id="CustomerTable" class="table table-bordered table-hover table-responsive">
+        <thead>
+            <tr>
+                <th>Customer Name</th>
+                <th>Mobile No</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+
+@section scripts{
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            $("#CustomerTable").DataTable({
+
+                "ordering": true,
+                "processing": true,
+                "responsive": true,
+                "paging": true,
+
+                "ajax": {
+
+                    "type": "GET",
+                    "url": "/Customer/GetAllCustomerListByRole",
+                    "datatype": "json",
+
+                },
+
+                "columns": [
+
+                    { "data": "CustomerName" },
+                    { "data": "Mobileno" },
+                    {
+                        "title": "Action",
+                        "render": function (data, type, row, meta) {
+
+                            return '<a class="btn btn-primary" href="/ComBill/SaveUpdateBill/'+ row.pk_Cusid +'"> Select </a> | <a class="btn btn-primary" href="/Customer/Edit/' + row.pk_Cusid + '">Edit</a> | <a class="btn btn-primary" href = "/Customer/Delete/' + row.pk_Cusid + '"> Delete </a>';
+                        }
+                    }
+                ],
+            });
+
+        });
+
+
+    </script>
+
+}
